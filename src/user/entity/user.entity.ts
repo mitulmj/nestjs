@@ -16,4 +16,7 @@ export class User{
 
     @Column()
     phone_no:string;
+
+    @Column({nullable:true})
+    image_path:string;
 }

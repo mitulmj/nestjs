@@ -17,4 +17,6 @@ export class UpdateUserDTO {
     @MaxLength(10)  
     @MinLength(10)
     phone_no:string;
+
+    image_path:string;
 }

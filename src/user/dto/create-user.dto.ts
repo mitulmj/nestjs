@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumberString, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumberString, IsString, isURL, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDTO {
 
@@ -18,4 +18,6 @@ export class CreateUserDTO {
     @MaxLength(10)  
     @MinLength(10)
     phone_no:string;
+
+    image_path:string;
 }

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Any, Not, Repository } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import * as fs from 'fs';
 
 import { User } from './entity/user.entity';
 @Injectable()
@@ -43,7 +44,7 @@ export class UserService {
         return response;
     }
 
-    async update(updateuserDTO:UpdateUserDTO, userId:number){
+    async update(updateuserDTO:UpdateUserDTO, userId:number, hostUrl){
         const response = {
             status:200,
             message:'Ops! Something went wrong.',
@@ -55,6 +56,13 @@ export class UserService {
             response.message = 'User not found.'
             return response;
         }
+        if(usernotExist.length >0 ){
+            if(hostUrl !== null){
+                const link= usernotExist[0].image_path.split('/').pop();
+                fs.unlinkSync('./uploads/profile-photos/'+link)
+            }
+        }
+
         const emailExist = await this.usersRepository.find({where:{'email':updateuserDTO.email,'id':Not(userId)},})
         //console.log(emailExist);
         if(emailExist.length > 0){

@@ -23,7 +23,7 @@ export const multerOptions = {
         }
         if (file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
             // Allow storage of file
-            console.log("file filter",file)
+            // console.log("file filter",file)
             cb(null, true);
         } else {
             // Reject file

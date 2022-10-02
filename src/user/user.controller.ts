@@ -5,7 +5,6 @@ import { CreateUserDTO } from "./dto/create-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { UserService } from "./user.service";
 import { multerOptions } from "src/multer-config";
-import { Head } from "rxjs";
 
 
 @Controller('user')

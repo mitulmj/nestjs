@@ -15,4 +15,9 @@ export class SignInDto {
     message: 'Password is required',
   })
   password: string;
+
+  @IsNotEmpty({
+    message:'Device token is required',
+  })
+  device_token:string;
 }

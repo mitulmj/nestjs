@@ -62,7 +62,7 @@ export class AuthService {
             const accessToken = this.jwtService.sign(payload,{
                 secret:jwtConstants.secret
             })
-            const insertToken = await this.insertToken(verifyUser.id,accessToken)
+            const insertToken = await this.insertToken(verifyUser.id,accessToken,userData.device_token)
             if(insertToken){
                 delete payload.status;
                 payload.token = insertToken.token;
@@ -78,7 +78,7 @@ export class AuthService {
         }
     }
 
-    async insertToken(userId: number, token: string) {
+    async insertToken(userId: number, token: string,device_token:string) {
         const data = new TokenEntity();
         const checkExistToken = await this.tokenRepository.find({
           where: {
@@ -94,7 +94,7 @@ export class AuthService {
         }
         data.userId = userId;
         data.token = token;
-        
+        data.device_token = device_token;
         
         return this.tokenRepository.save(data);
     }
@@ -104,11 +104,14 @@ export class AuthService {
         this.response.data = [];
         try {
           const newToken = token.replace('Bearer ', '').trim();
+          // console.log(this.jwtService.decode(newToken))
+          this.jwtService.verify(newToken,{secret:jwtConstants.secret})
           const token_data = await this.tokenRepository.findOne({
             where: {
               token: newToken,
             },
           });
+          
           if (token_data.status === false) {
             this.response.message = 'Unathorized access.';
             return this.response;

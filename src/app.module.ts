@@ -11,6 +11,8 @@ import { JwtService } from "@nestjs/jwt";
 import { CommonService } from "./common/common.service";
 import { AuthService } from "./auth/auth.service";
 import { AuthMiddleware } from "./middleware/auth.middleware";
+import { BusinessModule } from './business/business.module';
+import { Business } from "./business/entity/business.entity";
 
 @Module({
     imports: [
@@ -18,12 +20,14 @@ import { AuthMiddleware } from "./middleware/auth.middleware";
         TypeOrmModule.forFeature([
             User,
             TokenEntity,
+            Business,
         ]),
         UserModule,
         AuthModule,
         MulterModule.register({
             dest: './upload',
-        })
+        }),
+        BusinessModule
     ],
     controllers:[AppController],
     providers:[

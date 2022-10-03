@@ -1,15 +1,13 @@
 import {  Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Any, Not, Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import * as fs from 'fs';
 
 import { User } from './entity/user.entity';
-import { resourceUsage } from 'process';
 import { CommonService } from 'src/common/common.service';
 import { commonStatus } from 'src/interface/comman-status';
-import { group } from 'console';
 @Injectable()
 export class UserService {
     public response : {status: any, message:any, data:any };

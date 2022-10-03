@@ -17,6 +17,9 @@ export class TokenEntity{
     @Column()
     token:string
 
+    @Column()
+    device_token:string
+
     @Column({default:1})
     status:boolean
 

@@ -24,7 +24,11 @@ export class UserService {
       }
 
     getUser() : Promise<User[]>{
-        return this.usersRepository.find();
+        return this.usersRepository.find({
+            where:{
+                status:commonStatus.Active
+            }
+        });
     }
 
     async create(createuserDTO:CreateUserDTO){
@@ -88,8 +92,10 @@ export class UserService {
             }
             if(usernotExist.length >0 ){
                 if(hostUrl !== null){
-                    const link= usernotExist[0].image_path.split('/').pop();
-                    fs.unlinkSync('./uploads/profile-photos/'+link)
+                    if(usernotExist[0].image_path !== null){
+                        const link= usernotExist[0].image_path.split('/').pop();
+                        fs.unlinkSync('./uploads/profile-photos/'+link)
+                    }
                 }
             }
     
@@ -123,7 +129,12 @@ export class UserService {
 
     async byphoneNO(phoneNo:string){
         try {
-            const userDetail = await this.usersRepository.find({where:[{'phone_no':phoneNo}]})
+            const userDetail = await this.usersRepository.find({
+                where:{
+                    phone_no:phoneNo,
+                    status:commonStatus.Active
+                }
+            })
             if(userDetail.length>0){
                 this.response.message = 'Yes'
             }
@@ -136,7 +147,12 @@ export class UserService {
 
     async show(userId:number){       
         try {
-            const user = await this.usersRepository.findOne({where : {'id': userId }});
+            const user = await this.usersRepository.findOne({
+                where : {
+                    id:userId,
+                    status:commonStatus.Active
+                }
+            });
             if(user){
                 this.response.status = 'success'
                 this.response.message = 'User fetch success-fully'
@@ -151,7 +167,12 @@ export class UserService {
 
     async findByEmail(email:string){
         try {
-            const user = await this.usersRepository.findOne({where: {'email': email}})
+            const user = await this.usersRepository.findOne({
+                where: {
+                    email:email,
+                    status:commonStatus.Active
+                }
+            })
             if(user){
                 this.response.status = 'success'
                 this.response.message = 'User fetch success-fully'
@@ -168,7 +189,10 @@ export class UserService {
     async findByEmailOrPhoneOrId(user:string){
         try {
             const userDetail = await this.usersRepository.find({
-                where:[ {'email':user} , {'phone_no':user}]
+                where:[ 
+                    {'email':user, status:commonStatus.Active} ,
+                    {'phone_no':user, status:commonStatus.Active}
+                ]
             })
             if(userDetail.length>0){
                 this.response.status = 'succuess'

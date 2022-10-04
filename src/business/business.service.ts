@@ -29,7 +29,27 @@ export class BusinessService {
         }
     }
 
-    async getAllBusiness(businessDto : BusinessDTO){
+    async getAllBusiness(groupId:number){
+        try {
+            
+            const allBusiness = await this.businessRepository.find({
+                where:{groupId:groupId, status:commonStatus.Active}
+            })
+            if(allBusiness.length == 0){
+                this.response.message = 'No Business Found'
+                return this.response
+            }
+            this.response.status = "success";
+            this.response.message = "Business data succuess fully fetched"
+            this.response.data = allBusiness;
+            return this.response;
+        } catch (error) {
+            this.response.message = error.message;
+            return this.response;
+        }
+    }
+
+    async getMyBusiness(businessDto : BusinessDTO){
         try {
             const validation = await this.commonService.validateData(businessDto)
             if(validation.status === 'error'){
@@ -120,7 +140,7 @@ export class BusinessService {
                 if(hostUrl !== null){
                     if(businessExist[0].business_image_path  !== null ){
                         const link= businessExist[0].business_image_path.split('/').pop();
-                        fs.unlinkSync('./uploads/business-photos/'+link)
+                        fs.unlinkSync('../../uploads/business-photos/'+link)
                     }
                 }
             }

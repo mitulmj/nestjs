@@ -49,6 +49,7 @@ export class AppModule implements NestModule{
             { path: '/user', method: RequestMethod.PATCH },
             { path: '/user', method: RequestMethod.DELETE },
             { path: '/user/*', method: RequestMethod.ALL },
+            { path: '/business/',method:RequestMethod.ALL}
           );
       }
 }

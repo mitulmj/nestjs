@@ -119,7 +119,7 @@ export class UserService {
             const update = this.usersRepository.update(userId, updateuserDTO);
             this.response.status = 'success'
             this.response.data = update
-            this.response.message='User update sucessfully'
+            this.response.message='User update successfully'
             return this.response;   
         } catch (error) {
             this.response.data =  error.message

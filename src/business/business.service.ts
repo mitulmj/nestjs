@@ -79,7 +79,7 @@ export class BusinessService {
             .andWhere('business.userId IN (:userId)',{userId:businessDto.userId})
 
             let allBusiness = await business.getMany();
-            this.response.status = 'sucess',
+            this.response.status = 'success',
             this.response.message = allBusiness.length > 0 ? 'Business data found success fully' : 'No business found'
             this.response.data = allBusiness;
            return this.response
@@ -156,7 +156,7 @@ export class BusinessService {
             // console.log(update);
             this.response.status = 'success'
             this.response.data = update
-            this.response.message='Business update sucessfully'
+            this.response.message='Business update successfully'
             return this.response;   
         } catch (error) {
             this.response.message = error.message;

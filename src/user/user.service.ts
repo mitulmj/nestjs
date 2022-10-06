@@ -68,7 +68,7 @@ export class UserService {
             const user = await this.usersRepository.save(createuserDTO)
             this.response.status = 'success'
             this.response.message = 'User created successfully.'
-            this.response.data.push(user);
+            this.response.data = user;
             return this.response;    
         } catch (error) {
             this.response.data = error.message

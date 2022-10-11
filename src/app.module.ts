@@ -13,6 +13,7 @@ import { AuthService } from "./auth/auth.service";
 import { AuthMiddleware } from "./middleware/auth.middleware";
 import { BusinessModule } from './business/business.module';
 import { Business } from "./business/entity/business.entity";
+import { BusinessTypes } from "./business/entity/business_types.entity";
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { Business } from "./business/entity/business.entity";
             User,
             TokenEntity,
             Business,
+            BusinessTypes,
         ]),
         UserModule,
         AuthModule,

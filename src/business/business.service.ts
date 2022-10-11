@@ -10,6 +10,7 @@ import { Business } from './entity/business.entity';
 import { CommonService } from 'src/common/common.service';
 import { commonStatus } from 'src/interface/comman-status';
 import { User } from '../user/entity/user.entity';
+import { BusinessTypes } from './entity/business_types.entity';
 
 
 @Injectable()
@@ -18,6 +19,8 @@ export class BusinessService {
     constructor(
         @InjectRepository(Business)
         private businessRepository: Repository<Business>,
+        @InjectRepository(BusinessTypes)
+        private businessTypeRepository: Repository<BusinessTypes>,
         @InjectRepository(User)
         private usersRepository: Repository<User>,
         private commonService : CommonService
@@ -29,15 +32,37 @@ export class BusinessService {
         }
     }
 
-    async getAllBusiness(groupId:number){
+    async getAllBusiness(groupId:number,req){
         try {
-            
+            const host = req.headers.host;
+            const proto = req.protocol;
+            const imgLink =  `${proto}://${host}/uploads/business-types/`
             const allBusiness = await this.businessRepository.find({
-                where:{groupId:groupId, status:commonStatus.Active}
+                where:{groupId:groupId, status:commonStatus.Active},
+                relations: {
+                    user: true,
+                    businessType:true
+                },
+                select: {
+                    user: {
+                        name: true,
+                        email: true,
+                        phone_no:true
+                    },
+                    businessType:{
+                        type_name:true,
+                        image_path:true
+                    }
+                }
             })
             if(allBusiness.length == 0){
                 this.response.message = 'No Business Found'
                 return this.response
+            }
+            if(allBusiness.length > 0){
+                allBusiness.forEach((business,index)=>{
+                    business.businessType.image_path = imgLink + business.businessType.image_path
+                });
             }
             this.response.status = "success";
             this.response.message = "Business data succuess fully fetched"
@@ -49,8 +74,11 @@ export class BusinessService {
         }
     }
 
-    async getMyBusiness(businessDto : BusinessDTO){
+    async getMyBusiness(req,businessDto : BusinessDTO){
         try {
+            const host = req.headers.host;
+            const proto = req.protocol;
+            const imgLink =  `${proto}://${host}/uploads/business-types/`
             const validation = await this.commonService.validateData(businessDto)
             if(validation.status === 'error'){
                 this.response.message = validation.message
@@ -67,11 +95,14 @@ export class BusinessService {
             const business = await this.businessRepository
             .createQueryBuilder('business')
             .leftJoinAndSelect('business.user','user')
+            .leftJoinAndSelect('business.businessType','businessType')
             .select([
                 'business',
                 'user.name',
                 'user.phone_no',
-                'user.email'
+                'user.email',
+                'businessType.type_name',
+                'businessType.image_path',
             ]).
             where('business.status IN (:status)',{status:status})
             .andWhere('user.status IN (:status)',{status:status})
@@ -79,6 +110,11 @@ export class BusinessService {
             .andWhere('business.userId IN (:userId)',{userId:businessDto.userId})
 
             let allBusiness = await business.getMany();
+            if(allBusiness.length > 0){
+                allBusiness.forEach((business,index)=>{
+                    business.businessType.image_path = imgLink + business.businessType.image_path
+                });
+            }
             this.response.status = 'success',
             this.response.message = allBusiness.length > 0 ? 'Business data found success fully' : 'No business found'
             this.response.data = allBusiness;
@@ -102,7 +138,10 @@ export class BusinessService {
                 where : {id: CreateBusinessDTO.userId}
             })
             payload.user = user;
-
+            const businessType = await this.businessTypeRepository.findOne({
+                where: {id:CreateBusinessDTO.businessTypeId}
+            })
+            payload.businessType = businessType
             const business = await this.businessRepository.save(payload)
             if (!business) {
                 this.response.message =
@@ -150,6 +189,11 @@ export class BusinessService {
                 where : {id: UpdateBusinessDTO.userId}
             })
             payload.user = user;
+
+            const businessType = await this.businessTypeRepository.findOne({
+                where:{id: UpdateBusinessDTO.businessTypeId}
+            })
+            payload.businessType = businessType
             // console.log(payload);
             // return;
             const update = await this.businessRepository.save(payload);

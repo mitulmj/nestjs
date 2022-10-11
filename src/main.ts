@@ -11,6 +11,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({whitelist:true}));
   app.use('/uploads/profile-photos',express.static(join(__dirname,'..','uploads/profile-photos')))
   app.use('/uploads/business-photos',express.static(join(__dirname,'..','uploads/business-photos')))
-  await app.listen(3000);
+  app.use('/uploads/business-types',express.static(join(__dirname,'..','uploads/business-types')))
+  await app.listen(5000);
 }
 bootstrap();

@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommonService } from 'src/common/common.service';
 import { User } from 'src/user/entity/user.entity';
-import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { jwtConstants } from './constant';
 import { SignInDto } from './dto/signin.dto';
@@ -12,7 +11,6 @@ import { TokenEntity } from './entity/token.entity';
 export class AuthService {
     public response :{status:string,message:string,data:any}
     constructor(
-        private userService: UserService,
         private jwtService : JwtService,
         private commonService : CommonService,
         @InjectRepository(TokenEntity)

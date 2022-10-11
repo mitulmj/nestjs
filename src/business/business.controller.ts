@@ -14,13 +14,13 @@ export class BusinessController {
     ){}
 
     @Get('/:groupId')
-    async getAllBusiness(@Param('groupId',ParseIntPipe) groupId: number){
-        return await this.businessService.getAllBusiness(groupId)
+    async getAllBusiness(@Param('groupId',ParseIntPipe) groupId: number,@Req() req){
+        return await this.businessService.getAllBusiness(groupId,req)
     }
 
     @Post('/getmy')
-    async getMyBusiness(@Body() BusinessDTO:BusinessDTO){
-        return await this.businessService.getMyBusiness(BusinessDTO)
+    async getMyBusiness(@Req() req:Request,@Body() BusinessDTO:BusinessDTO){
+        return await this.businessService.getMyBusiness(req,BusinessDTO)
     }
 
     @Post()

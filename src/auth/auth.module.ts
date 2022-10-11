@@ -14,12 +14,12 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
     imports:[
         TypeOrmModule.forFeature([User,TokenEntity]),
-        UserModule,
         JwtModule.register({
             secret:jwtConstants.secret,
             signOptions:{expiresIn:'15 days'}
         })],
     controllers: [AuthController],
     providers: [AuthService,JwtStrategy,CommonService],
+    exports:[AuthService]
 })
 export class AuthModule {}

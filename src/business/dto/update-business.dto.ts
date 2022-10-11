@@ -21,6 +21,13 @@ export class UpdateBusinessDTO {
     userId: number;
 
     @IsNotEmpty({
+        message:'Business Type id is required'
+    })
+    @Type(()=> Number)
+    @IsNumber()
+    businessTypeId: number;
+
+    @IsNotEmpty({
         message:'Group id is required'
     })
     @Type(()=> Number)

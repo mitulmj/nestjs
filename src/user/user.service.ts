@@ -8,13 +8,18 @@ import * as fs from 'fs';
 import { User } from './entity/user.entity';
 import { CommonService } from 'src/common/common.service';
 import { commonStatus } from 'src/interface/comman-status';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from 'src/auth/constant';
 @Injectable()
 export class UserService {
     public response : {status: any, message:any, data:any };
     constructor(
         @InjectRepository(User)
         private usersRepository: Repository<User>,
-        private commonService : CommonService
+        private commonService : CommonService,
+        private authService : AuthService,
+        private jwtService : JwtService,
       ) {
         this.response = {
             status:'error',
@@ -66,6 +71,23 @@ export class UserService {
             createuserDTO.groupId = 1;
             createuserDTO.password = String ( await this.commonService.md5String(createuserDTO.password))
             const user = await this.usersRepository.save(createuserDTO)
+            const payload: any = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                status: 1,
+            };
+            const accessToken = this.jwtService.sign(payload,{
+                secret:jwtConstants.secret
+            })
+            const insertToken = await this.authService.insertToken(user.id,accessToken,createuserDTO.device_token)
+            if(insertToken){
+                delete payload.status;
+                payload.token = insertToken.token;
+                payload.id = user.id,
+                // this.response.status = 'success'
+                user["token"] = payload.token;
+            }
             this.response.status = 'success'
             this.response.message = 'User created successfully.'
             this.response.data = user;

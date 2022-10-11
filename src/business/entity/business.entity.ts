@@ -1,6 +1,7 @@
 import { commonStatus } from "src/interface/comman-status";
 import { User } from "src/user/entity/user.entity";
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn, OneToOne } from "typeorm";
+import { BusinessTypes } from "./business_types.entity";
 
 @Entity()
 export class Business{
@@ -15,6 +16,10 @@ export class Business{
     @ManyToOne(()=>User, (user)=> user.id)
     @JoinColumn()
     user:User
+
+    @OneToOne(()=>BusinessTypes, (businessType)=> businessType.id)
+    @JoinColumn()
+    businessType:BusinessTypes
 
     @Column({default:1})
     groupId:number;

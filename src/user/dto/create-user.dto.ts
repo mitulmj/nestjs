@@ -43,4 +43,8 @@ export class CreateUserDTO {
     @IsNumber()
     groupId:number
 
+    @IsNotEmpty({
+        message:'Device token is required',
+    })
+    device_token:string;
 }

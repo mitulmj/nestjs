@@ -14,6 +14,9 @@ import { AuthMiddleware } from "./middleware/auth.middleware";
 import { BusinessModule } from './business/business.module';
 import { Business } from "./business/entity/business.entity";
 import { BusinessTypes } from "./business/entity/business_types.entity";
+import { UtilityModule } from './utility/utility.module';
+import { Utility } from "./utility/entity/utility.entity";
+import { InstantModule } from './instant/instant.module';
 
 @Module({
     imports: [
@@ -23,13 +26,16 @@ import { BusinessTypes } from "./business/entity/business_types.entity";
             TokenEntity,
             Business,
             BusinessTypes,
+            Utility
         ]),
         UserModule,
         AuthModule,
         MulterModule.register({
             dest: './upload',
         }),
-        BusinessModule
+        BusinessModule,
+        UtilityModule,
+        InstantModule
     ],
     controllers:[AppController],
     providers:[
@@ -52,7 +58,9 @@ export class AppModule implements NestModule{
             { path: '/user', method: RequestMethod.PATCH },
             { path: '/user', method: RequestMethod.DELETE },
             { path: '/user/*', method: RequestMethod.ALL },
-            { path: '/business/',method:RequestMethod.ALL}
+            { path: '/business/',method:RequestMethod.ALL},
+            { path: '/instant/*', method:RequestMethod.ALL},
+            { path: '/utility/*', method:RequestMethod.ALL}
           );
       }
 }

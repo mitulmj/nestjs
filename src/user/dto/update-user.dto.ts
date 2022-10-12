@@ -17,7 +17,7 @@ export class UpdateUserDTO {
     @IsNotEmpty({
         message:'Email is required'
     })
-    @Validate(UniqueEmailRule)
+    // @Validate(UniqueEmailRule)
     email: string
 
     @IsString()

@@ -18,8 +18,8 @@ export class addInstant {
         message:'Instant id is required'
     })
     @Type(()=> Number)
-    @IsNumber()
-    instantUserId:number
+    @IsNumber({},{each: true})
+    instantUserId:number[]
 
     @IsNotEmpty({
         message:'Group id is required'

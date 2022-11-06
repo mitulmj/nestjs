@@ -12,7 +12,7 @@ async function bootstrap() {
   app.use('/uploads/profile-photos',express.static(join(__dirname,'..','uploads/profile-photos')))
   app.use('/uploads/business-photos',express.static(join(__dirname,'..','uploads/business-photos')))
   app.use('/uploads/business-types',express.static(join(__dirname,'..','uploads/business-types')))
-  app.use('/uploads/utility-photos',express.static(join(__dirname,'..','uploads/utility-photos')))
+  app.use('/uploads/utility-types',express.static(join(__dirname,'..','uploads/utility-types')))
   await app.listen(5000);
 }
 bootstrap();

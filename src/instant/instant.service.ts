@@ -58,13 +58,14 @@ export class InstantService {
 
     async addInstant(addInstant:addInstant){
         try {
-            if(addInstant.userId === addInstant.instantUserId){
+            if(addInstant.instantUserId.includes(addInstant.userId)){
                 this.response.message = "You cant add own id into instant."
                 return this.response;
             }
             const getInstant = await this.instantRepository.find({
                 where:{userId:addInstant.userId}
             })
+            let leftLength = 5 - getInstant.length;
             if(getInstant.length >= 5){
                 this.response.message = "You can add Maximum 5 Instant User"
                 return this.response
@@ -77,34 +78,46 @@ export class InstantService {
                 this.response.message = "User id is not valid"
                 return this.response
             }
-            const isValidInstant = await this.userRepository.find({
-                where:{id:addInstant.instantUserId}
+            const getInstantValidUser = await this.userRepository.find({
+                where:{id:In([...addInstant.instantUserId])}
             })
-            if(isValidInstant.length == 0){
-                this.response.message = "Instant id is not valid"
+            let validUser = getInstantValidUser.map(v => v.id)
+            let notValidUsers = addInstant.instantUserId.filter(o => validUser.indexOf(o) === -1);
+            
+            if(notValidUsers.length > 0){
+                this.response.message = "Instant id "+ [...notValidUsers] +" is not valid instant user id";
                 return this.response
             }
-
             const Added = await this.instantRepository.find({
                 where:{
                     userId:addInstant.userId,
-                    instantUserId:addInstant.instantUserId
+                    instantUserId:In([...addInstant.instantUserId])
                 }
             })
-            if(Added.length > 0){
-                this.response.message = "User id and Instant User id is already added."
-                return this.response;
+            let addedUser = Added.map(a => a.instantUserId);
+
+
+            let notAddedUser = addInstant.instantUserId.filter((o) => addedUser.indexOf(o) === -1)
+            notAddedUser =  notAddedUser.slice(0,leftLength);
+            
+            if(notAddedUser.length > 0){
+                notAddedUser.forEach(async (addNew) => {
+                    const instant = await this.instantRepository.save({
+                        userId:addInstant.userId,
+                        instantUserId:addNew,
+                        groupId:addInstant.groupId
+                    })
+                })
+                this.response.status = 'success'
+                this.response.message = 'Instant added successfully.'
+                this.response.data = [];
+                return this.response; 
+            } else{
+                this.response.status = 'success'
+                this.response.message = 'Instant added allready.'
+                this.response.data = [];
+                return this.response; 
             }
-            const instant = await this.instantRepository.save(addInstant)
-            if (!instant) {
-                this.response.message =
-                  'There is an issue inserting instant. Please try again.';
-                 return this.response;
-              }
-            this.response.status = 'success'
-            this.response.message = 'Instant added successfully.'
-            this.response.data = [];
-            return this.response; 
         } catch (error) {
             this.response.message = error.message
             return this.response

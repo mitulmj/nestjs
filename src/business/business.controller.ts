@@ -13,6 +13,11 @@ export class BusinessController {
         private businessService: BusinessService
     ){}
 
+    @Get("/businesstype")
+    getAllbusinessType(@Req() req:Request){
+        return this.businessService.getAllBusinessType(req);
+    }
+
     @Get('/:groupId')
     async getAllBusiness(@Param('groupId',ParseIntPipe) groupId: number,@Req() req){
         return await this.businessService.getAllBusiness(groupId,req)

@@ -132,6 +132,21 @@ export class BusinessService {
                 this.response.message = validation.message
                 return this.response
             }
+            const status = commonStatus.Active
+            const checkBusinessType = await this.businessRepository.createQueryBuilder('business')
+            .leftJoinAndSelect('business.businessType','businessType')
+            .select([
+                'business',
+            ]).
+            where('business.status IN (:status)',{status:status})
+            .andWhere('business.userId IN (:userId)',{userId:CreateBusinessDTO.userId})
+            .andWhere('business.businessTypeId IN (:businessTypeId)',{businessTypeId : CreateBusinessDTO.businessTypeId}).getOne()
+            if(checkBusinessType){
+                this.response.message = `Business type id = '${CreateBusinessDTO.businessTypeId}' is already assign with user id ${CreateBusinessDTO.userId}`
+                return this.response;
+            }
+
+            
             CreateBusinessDTO.groupId = 1;
             const payload = new Business(CreateBusinessDTO);
             const user = await this.usersRepository.findOne({
@@ -185,6 +200,25 @@ export class BusinessService {
             }
 
             UpdateBusinessDTO.groupId = 1;
+
+            const status = commonStatus.Active
+            const id =UpdateBusinessDTO.businessId;
+            const checkBusinessType = await this.businessRepository.createQueryBuilder('business')
+            .leftJoinAndSelect('business.businessType','businessType')
+            .select([
+                'business',
+            ]).
+            where('business.status IN (:status)',{status:status})
+            .andWhere('business.id != :id',{id})
+            .andWhere('business.userId IN (:userId)',{userId:UpdateBusinessDTO.userId})
+            .andWhere('business.businessTypeId IN (:businessTypeId)',{businessTypeId : UpdateBusinessDTO.businessTypeId}).getOne()
+            if(checkBusinessType){
+                this.response.message = `Business type id = '${UpdateBusinessDTO.businessTypeId}' is already assign with user id ${UpdateBusinessDTO.userId}`
+                this.response.status = "error";
+                this.response.data = [];
+                return this.response;
+            }
+
             const user = await this.usersRepository.findOne({
                 where : {id: UpdateBusinessDTO.userId}
             })
@@ -225,4 +259,25 @@ export class BusinessService {
             return this.response;   
         }
     }
+
+   async getAllBusinessType(req) {
+        try{
+            const host = req.headers.host;
+            const proto = req.protocol;
+            const imgLink =  `${proto}://${host}/uploads/business-types/`
+            const allType = await this.businessTypeRepository.find()
+            if(allType.length > 0){
+                allType.forEach((business,index)=>{
+                    business.image_path = imgLink + business.image_path
+                });
+            }
+            this.response.data = allType,
+            this.response.message = 'Business Type fetch Successfully'
+            this.response.status = 'success'
+            return this.response;
+        }catch(error){
+            this.response.message = error.message;
+            return this.response;
+        }
+   }
 }
